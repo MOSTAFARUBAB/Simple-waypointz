@@ -1,29 +1,31 @@
-# Simple Waypoints (Fabric, Minecraft 26.3, client-side)
+# Simple Waypoints — Native Beacon Beam Only (Minecraft 26.3)
 
-Colored waypoint labels (name + distance) shown through walls. A solid beam and a label (name + distance) are drawn on screen at each waypoint.
+A client-side Fabric waypoint mod. Each saved waypoint is marked in the world with Minecraft's own `BeaconRenderer.submitBeaconBeam` renderer. This uses the vanilla beacon beam texture and scrolling animation, with a bright inner core and a slightly narrower, faint-but-visible outer glow.
 
-Controls
-- B (rebind in Controls) -> drop a waypoint at your position
-- J (rebind in Controls) or /wp menu -> waypoint menu: create, edit (name, position, color, timer) and delete
-- /wp add <name>
-- /wp add <name> <x> <y> <z>
-- /wp remove <name>
-- /wp color <name> <color>   (red green blue yellow pink cyan orange white, hex like ff8800, or chroma = rainbow)
-- /wp expire <name> <seconds> (0 = permanent)
-- /wp list
-- /wp clear
-Saved to .minecraft/config/simple-waypoints.json
+There are no world-space waypoint names, distance labels, logo/square markers, or ground rings. The B key opens the new-waypoint editor; J opens the waypoint list. Waypoints are saved locally and separated by world/server and dimension.
 
-## Get the jar (no software to install)
-1. Create a free GitHub account and a NEW empty repository.
-2. Upload ALL files from this folder to it (drag and drop in the browser works).
-   Make sure the hidden ".github" folder is included.
-3. Open the repo's "Actions" tab -> "Build mod jar" -> wait for the green check.
-4. Open the finished run -> "Artifacts" -> download "simple-waypoints-jar" -> unzip.
-5. Put simple-waypoints-1.0.0.jar in .minecraft/mods together with Fabric API for 26.3
-   (and Fabric Loader 0.19.3+, Java 25).
+## Target versions
+- Minecraft Java 26.3
+- Java 25
+- Fabric Loader 0.19.5
+- Fabric API 0.163.0+26.3
+- Fabric Loom 1.18-SNAPSHOT (non-remapping Loom)
 
-If the build fails, open the failed step, copy the red error lines and send them to Claude.
+## Build with GitHub Actions
+1. Upload every item in this folder to the root of your GitHub repository, including the hidden `.github` folder.
+2. Push to your branch or run the workflow manually from **Actions**.
+3. Wait for the workflow to succeed.
+4. Download the `simple-waypoints-mc-26.3-beam-only` artifact.
+5. Extract the artifact ZIP and put the `.jar` inside your `.minecraft/mods` folder.
 
-If the build fails and the error mentions BeamRenderer: delete src/main/java/com/example/waypoints/BeamRenderer.java
-and the line `BeamRenderer.init();` in WaypointsMod.java, then rebuild (you keep the labels, lose the beam).
+## Build locally
+Use JDK 25 and Gradle 9.8, then run:
+
+```bash
+gradle clean build --no-daemon -PwithBeam=true
+```
+
+The installable mod JAR is produced in `build/libs/`. Do not put this source ZIP in the mods folder.
+
+## Verification status
+The source and Gradle configuration have been corrected for non-remapping Loom (`implementation`, not `modImplementation`). This environment does not have JDK 25 or Gradle installed, so the project has **not** been compiled or tested in Minecraft here. GitHub Actions must pass before the JAR is considered ready.

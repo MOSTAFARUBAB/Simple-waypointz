@@ -6,10 +6,14 @@ version = project.mod_version
 group = project.maven_group
 
 base {
-    archivesName = project.archives_base_name
+    archivesName = project.hasProperty('withBeam')
+            ? "${project.archives_base_name}-beam-only"
+            : project.archives_base_name
 }
 
 repositories {
+    maven { url = 'https://maven.fabricmc.net/' }
+    mavenCentral()
 }
 
 dependencies {
@@ -19,17 +23,20 @@ dependencies {
 }
 
 processResources {
-    inputs.property "version", project.version
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version
+    inputs.property 'version', project.version
+    filesMatching('fabric.mod.json') {
+        expand 'version': project.version
     }
 }
 
 tasks.withType(JavaCompile).configureEach {
-    it.options.release = 25
+    options.release = 25
+    options.encoding = 'UTF-8'
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_25
-    targetCompatibility = JavaVersion.VERSION_25
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+    withSourcesJar()
 }
